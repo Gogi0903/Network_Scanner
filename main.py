@@ -14,13 +14,12 @@ def get_arguments():
 def scan(ip):
     # készít egy packetet a Broadcast MAC address felé, amit az adott networkon lévő összes gép megkap és IP-t kér.
     arp_request = scapy.ARP(pdst=ip)                                                                                    # kiküld a cél-hálózatnak egy jelet, ami az IP címet tartalmazza
-    broadcast = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")                                                                    # itt állítjuk be a broadcast MAC addresst /scapy.ls(scapy.Ether())
+    broadcast = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")                                                                    # itt állítjuk be a broadcast MAC addresst
     arp_request_broadcast = broadcast/arp_request                                                                       # ezzel állítjuk a cél MAC addresst a broadcast MAC addressre
-    answered_list = scapy.srp(arp_request_broadcast, timeout=1, verbose=False)[0]                                       # ezzel a paranccsal küldjük el a packetet, és ez kapja meg a választ /timeout=>1secet vár a válaszra
+    answered_list = scapy.srp(arp_request_broadcast, timeout=1, verbose=False)[0]                                       # ezzel a paranccsal küldjük el a packetet, és ez kapja meg a választ
     clients_list = list()
 
     for i in answered_list:
-        # print(i[1].show())                                                                                            # packet objektumnál .show() metódussal tudjuk a csomag mezőit megnézni
         client_dict = {'ip': i[1].psrc, 'mac': i[1].hwsrc}
         clients_list.append(client_dict)
     return clients_list
@@ -33,5 +32,5 @@ def print_result(results_list):
 
 
 argument = get_arguments()
-scan_result = scan(argument.target)  # 192.168.181.1/24
+scan_result = scan(argument.target)
 print_result(scan_result)
